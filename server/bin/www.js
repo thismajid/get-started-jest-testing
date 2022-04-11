@@ -6,6 +6,7 @@
 import app from "./../app.js";
 import debugLib from "debug";
 import http from "http";
+import { dbConnection } from "./../services/index.js";
 
 const debug = debugLib("get-started-jest-testing:server");
 
@@ -27,7 +28,10 @@ const server = http.createServer(app);
  */
 
 server.listen(port, () => {
-  console.log(`Server is running on localhost:${port} ...`);
+  dbConnection.getInstance().then(() => {
+    console.log("Database is connected ...");
+    console.log(`Server is running on localhost:${port} ...`);
+  });
 });
 server.on("error", onError);
 server.on("listening", onListening);
