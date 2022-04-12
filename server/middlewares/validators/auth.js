@@ -1,4 +1,7 @@
 import Ajv from "ajv";
+import SendResponse from "./../../utils/sendResponse.js";
+
+const sendResponse = new SendResponse();
 
 const ajv = new Ajv({ allErrors: true });
 
@@ -28,12 +31,11 @@ const loginValidator = async (req, res, next) => {
       validate.errors.forEach(async (err) => {
         msg += `${err.instancePath} ${err.message}`;
       });
-      return res.status(400).send(msg);
+      return sendResponse.setError(400, msg).send(res);
     }
     next();
   } catch (err) {
-    console.log(err);
-    next(err);
+    return sendResponse.setError(400, err.message).send(res);
   }
 };
 
@@ -42,8 +44,8 @@ const registerValidator = async (req, res, next) => {
     const schema = {
       type: "object",
       properties: {
-        firstName: { type: "string", minLength: 3, maxLength: 30 },
-        lastName: { type: "string", minLength: 3, maxLength: 30 },
+        firstName: { type: "string", minLength: 2, maxLength: 30 },
+        lastName: { type: "string", minLength: 2, maxLength: 30 },
         email: {
           type: "string",
           pattern: "^[a-zA-Z0-9.]+@[a-zA-Z0-9.]+.[a-zA-Z]{2,4}",
@@ -61,16 +63,15 @@ const registerValidator = async (req, res, next) => {
     const validate = ajv.compile(schema);
     const valid = validate(req.body);
     if (!valid) {
-      let msg;
+      let msg = "";
       validate.errors.forEach(async (err) => {
         msg += `${err.instancePath} ${err.message}`;
       });
-      return res.status(400).send(msg);
+      return sendResponse.setError(400, msg).send(res);
     }
     next();
   } catch (err) {
-    console.log(err);
-    next(err);
+    return sendResponse.setError(400, err.message).send(res);
   }
 };
 
