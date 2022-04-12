@@ -5,7 +5,7 @@ export default class SendResponse {
     this.statusCode = statusCode;
     this.message = message;
     this.data = data;
-    this.type = "success";
+    this.status = "success";
     return this;
   }
 
@@ -13,19 +13,16 @@ export default class SendResponse {
     this.statusCode = statusCode;
     this.message = message;
     this.data = data;
-    this.type = "error";
+    this.status = "error";
     return this;
   }
 
   send(res) {
     const result = new Response(this);
 
-    if (result.type === "success" || result.data)
-      return res.status(result.statusCode).json(result);
+    if (this.type === "success" || this.data)
+      return res.status(this.statusCode || 200).json(result);
 
-    return res.status(result.statusCode).json({
-      status: result.type,
-      message: result.message,
-    });
+    return res.status(this.statusCode || 400).json(result);
   }
 }

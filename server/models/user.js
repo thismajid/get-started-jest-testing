@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { hash } from "argon2";
+import { hash, verify } from "argon2";
 
 const { Schema } = mongoose;
 
@@ -43,9 +43,10 @@ UserSchema.pre("save", async function (next) {
   }
 });
 
-// User.methods.comparePassword = function (password) {
-//   return compareSync(password, this.password);
-// };
+UserSchema.methods.comparePassword = async function (password) {
+  return await verify(this.password, password);
+  // return compareSync(password, this.password);
+};
 
 UserSchema.methods.toJSON = function () {
   const user = this.toObject();

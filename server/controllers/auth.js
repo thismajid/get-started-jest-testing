@@ -1,8 +1,9 @@
 import SendResponse from "../utils/sendResponse.js";
-import { register } from "../services/auth.js";
+import { register, login } from "../services/auth.js";
+
+const sendResponse = new SendResponse();
 
 const registerController = async (req, res, next) => {
-  const sendResponse = new SendResponse();
   try {
     const { body } = req;
     const newUser = await register(body);
@@ -15,11 +16,14 @@ const registerController = async (req, res, next) => {
 };
 
 const loginController = async (req, res, next) => {
-  // const SendResponse = new SendResponse();
   try {
+    const { body } = req;
+    const token = await login(body);
+    return sendResponse
+      .setSuccess(200, "Login successfully", { access_token: token })
+      .send(res);
   } catch (err) {
-    console.log(err);
-    throw err;
+    return sendResponse.setError(400, err.message).send(res);
   }
 };
 
