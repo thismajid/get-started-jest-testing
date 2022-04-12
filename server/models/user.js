@@ -3,7 +3,7 @@ import { hash } from "argon2";
 
 const { Schema } = mongoose;
 
-const userSchema = new Schema({
+const UserSchema = new Schema({
   firstName: {
     type: String,
     required: true,
@@ -33,9 +33,7 @@ const userSchema = new Schema({
   },
 });
 
-const User = mongoose.model("User", userSchema);
-
-User.pre("save", async function (next) {
+UserSchema.pre("save", async function (next) {
   if (this.isNew || this.isModified("password")) {
     const { password } = this;
     this.password = await hash(password);
@@ -49,11 +47,13 @@ User.pre("save", async function (next) {
 //   return compareSync(password, this.password);
 // };
 
-User.methods.toJSON = function () {
+UserSchema.methods.toJSON = function () {
   const user = this.toObject();
   delete user.__v;
   delete user.password;
   return user;
 };
+
+const User = mongoose.model("User", UserSchema);
 
 export default User;

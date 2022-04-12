@@ -14,7 +14,7 @@ const debug = debugLib("get-started-jest-testing:server");
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(process.env.PORT || "3000");
+const port = normalizePort(process.env.PORT || "9999");
 app.set("port", port);
 
 /**

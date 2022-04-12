@@ -3,16 +3,18 @@ import mongoose from "mongoose";
 const dbConnection = (() => {
   let instance;
 
-  const createInstance = () => {
-    return mongoose
-      .createConnection("mongodb://localhost:27017/test-with-jest")
-      .asPromise();
+  const createInstance = async () => {
+    try {
+      return await mongoose.connect("mongodb://localhost/jest-testing");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return {
-    getInstance: () => {
+    getInstance: async () => {
       if (!instance) {
-        instance = createInstance();
+        instance = await createInstance();
       }
       return instance;
     },
