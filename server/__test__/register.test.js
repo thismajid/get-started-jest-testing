@@ -1,9 +1,7 @@
 import supertest from "supertest";
 import mongoose from "mongoose";
 
-import createServer from "../utils/server";
-
-const app = createServer();
+import app from "./../app.js";
 
 beforeEach((done) => {
   mongoose.connect(
@@ -11,12 +9,6 @@ beforeEach((done) => {
     { useNewUrlParser: true },
     () => done()
   );
-});
-
-afterEach((done) => {
-  mongoose.connection.db.dropDatabase(() => {
-    mongoose.connection.close(() => done());
-  });
 });
 
 describe("test registering", () => {
@@ -68,5 +60,11 @@ describe("test registering", () => {
     expect(body).toHaveProperty("status");
     expect(body).toHaveProperty("message");
     expect(body.status).toEqual("error");
+  });
+});
+
+afterEach((done) => {
+  mongoose.connection.db.dropDatabase(() => {
+    mongoose.connection.close(() => done());
   });
 });
